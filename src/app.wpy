@@ -1,0 +1,64 @@
+<style lang="less">
+</style>
+
+<script>
+import wepy from 'wepy'
+import 'wepy-async-function'
+
+import { setStore } from 'wepy-redux'
+import configStore from './store'
+
+const store = configStore()
+setStore(store)
+
+export default class extends wepy.app {
+  config = {
+    pages: [
+      'pages/index',
+      'pages/choose',
+      'pages/collect',
+      'pages/detail',
+      'pages/edit',
+      'pages/search',
+      'pages/personal'
+    ],
+    window: {
+      backgroundTextStyle: 'light',
+      navigationBarBackgroundColor: '#fff',
+      navigationBarTitleText: '闪电实习',
+      navigationBarTextStyle: 'black',
+      navigationStyle: 'custom'
+    },
+    'tabBar': {
+      'color': '#929292',
+      'selectedColor': '#606CFF',
+      'backgroundColor': '#f9f9f9',
+      'list': [{
+        'pagePath': 'pages/index',
+        'iconPath': 'common/images/practice.png',
+        'selectedIconPath': 'common/images/practice-light.png',
+        'text': '实习'
+      }, {
+        'pagePath': 'pages/collect',
+        'iconPath': 'common/images/collect.png',
+        'selectedIconPath': 'common/images/collect-light.png',
+        'text': '收藏'
+      }, {
+        'pagePath': 'pages/personal',
+        'iconPath': 'common/images/personal.png',
+        'selectedIconPath': 'common/images/personal-light.png',
+        'text': '我的'
+      }]
+    }
+  }
+
+  constructor () {
+    super()
+    this.use('requestfix')
+    this.use('promisify')
+  }
+
+  onLaunch() {
+  }
+}
+</script>

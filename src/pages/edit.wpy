@@ -1,0 +1,453 @@
+<style lang="less">
+  page {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    background: #F5F8FA;
+  }
+  .personal {
+    position: absolute;
+    box-sizing: border-box;
+    padding: 115px 30rpx 0;
+    display: flex;
+    flex-direction: column;
+    z-index: 220;
+    width: 100%;
+    .personal-message {
+      background-color: #fff;
+      flex: 1;
+      padding: 50rpx 40rpx;
+      box-shadow: 0 4rpx 14rpx 0 rgba(39, 38, 45, 0.05);;
+      border-radius: 8rpx;
+      box-sizing: border-box;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      .item {
+        position: relative;
+        width: 100%;
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        margin-bottom: 72rpx;
+        &:last-child {
+          margin: 0;
+        }
+        .item-title {
+          font-family: PingFangSC-Medium;
+          font-size: 34rpx;
+          color: #515151;
+          letter-spacing: 0;
+          text-align: center;
+          line-height: 48rpx;
+        }
+        .item-image {
+          position: absolute;
+          right: 0;
+          top: -16rpx;
+          width: 80rpx;
+          height: 80rpx;
+          border-radius: 50%;
+          overflow: hidden;
+        }
+        .item-image-open {
+          width: 80rpx;
+          height: 80rpx;
+        }
+        .item-input {
+          text-align: right;
+          flex: 1;
+          font-family: PingFangSC-Regular;
+          font-size: 30rpx;
+          color: #A4A4A4;
+          letter-spacing: 0;
+          line-height: 42rpx;
+        }
+        .item-divide {
+          font-family: PingFangSC-Regular;
+          font-size: 30rpx;
+          color: #A4A4A4;
+          letter-spacing: 0;
+          text-align: right;
+          line-height: 42rpx;
+        }
+        .item-value {
+          flex: 1;
+          font-family: PingFangSC-Regular;
+          font-size: 30rpx;
+          color: #A4A4A4;
+          letter-spacing: 0;
+          text-align: right;
+          line-height: 42rpx;
+        }
+      }
+    }
+  }
+  .submitBtn {
+    background-image: linear-gradient(-90deg, #99A5FF 0%, #606CFF 100%);
+    box-shadow: 0 4px 26px 0 rgba(96,108,255,0.64);
+    border-radius: 8px;
+    color: #ffffff;
+    font-size: 32rpx;
+    height: 110rpx;
+    width: 100%;
+    margin: 70rpx 0 200rpx 0;
+    line-height: 110rpx;
+    text-align: center;
+  }
+</style>
+<template>
+  <headerTitle></headerTitle>
+  <view class="personal">
+    <view class="personal-message">
+      <view class="item">
+        <view class="item-title">头像</view>
+        <view class="item-image">
+          <open-data class="item-image-open" type="userAvatarUrl"></open-data>
+        </view>
+      </view>
+      <view class="item">
+        <view class="item-title">姓名</view>
+        <input
+            type="text"
+            value="{{name}}"
+            class="item-input"
+            placeholder="您的真实姓名"
+            placeholder-style="color: #a4a4a4;"
+            @input="inputName"
+        />
+      </view>
+      <view class="item">
+        <view class="item-title">手机号</view>
+        <input
+            type="text"
+            value="{{phone}}"
+            class="item-input"
+            placeholder="必填"
+            placeholder-style="color: #a4a4a4;"
+            @input="inputPhone"
+        />
+      </view>
+      <view class="item">
+        <view class="item-title">邮箱</view>
+        <input type="text"
+               value="{{mail}}"
+               class="item-input"
+               placeholder="选填"
+               placeholder-style="color: #a4a4a4;"
+               @input="inputEmail"
+        />
+      </view>
+      <view class="item">
+        <view class="item-title">学校</view>
+        <view @tap="toChooseSchool" class="item-value">{{school}}</view>
+      </view>
+      <view class="item">
+        <view class="item-title">学历</view>
+        <picker mode="selector"
+                range="{{educationList}}"
+                value="{{educationIndex}}"
+                @change="educationChange"
+        >
+          <view class="item-value">{{educationList[educationIndex]}}</view>
+        </picker>
+      </view>
+      <view class="item">
+        <view class="item-title">在校时间</view>
+        <picker mode="date"
+                value="{{startDate}}"
+                start="2015-09-01"
+                end="2050-09-01"
+                @change="bindDateChangeStart"
+        >
+          <view class="item-value">{{startDate}}</view>
+        </picker>
+        <view class="item-divide">-</view>
+        <picker mode="date"
+                value="{{endDate}}"
+                start="2015-09-01"
+                end="2050-09-01"
+                @change="bindDateChangeEnd"
+        >
+          <view class="item-value">{{endDate}}</view>
+        </picker>
+      </view>
+      <view class="item">
+        <view class="item-title">专业</view>
+        <input type="text"
+               value="{{profession}}"
+               class="item-input"
+               placeholder="请填写"
+               placeholder-style="color: #a4a4a4;"
+               @input="inputProfession"
+        />
+      </view>
+    </view>
+    <view class="submitBtn" @tap="updateUserInfo">提交</view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  import headerTitle from '../components/header/header-title'
+  import mixins from '../mixins/mixins'
+  import { requestApi } from '../api/index'
+  import { connect, getStore } from 'wepy-redux'
+  const store = getStore()
+  @connect({
+    schoolName(state) {
+      return state.global.schoolName
+    }
+  })
+
+  export default class Index extends wepy.page {
+    config = {}
+    components = {
+      headerTitle: headerTitle
+    }
+    mixins = [mixins]
+    data = {
+      name: '',
+      phone: '',
+      school: '请选择',
+      mail: '',
+      profession: '',
+      educationList: [
+        '请选择',
+        '专科',
+        '本科',
+        '研究生',
+        '博士'
+      ],
+      educationCodeList: [
+        'SC',
+        'UU',
+        'MA',
+        'PHD'
+      ],
+      educationIndex: 0,
+      startDate: '2015-09-01',
+      endDate: '2019-07-01'
+    }
+
+    computed = {}
+
+    methods = {
+      toChooseSchool(e) {
+        this.$navigate({
+          url: '/pages/choose'
+        })
+      },
+      inputName(e) {
+        this.name = e.detail.value
+      },
+      inputPhone(e) {
+        this.phone = e.detail.value
+      },
+      inputEmail(e) {
+        this.mail = e.detail.value
+      },
+      inputProfession(e) {
+        this.profession = e.detail.value
+        this.$apply()
+      },
+      educationChange(e) {
+        this.educationIndex = e.detail.value
+        this.$apply()
+      },
+      bindDateChangeStart(e) {
+        this.startDate = e.detail.value
+        console.log('开始时间', this.startDate)
+        this.$apply()
+      },
+      bindDateChangeEnd(e) {
+        this.endDate = e.detail.value
+        console.log('结束时间', this.endDate)
+        this.$apply()
+      },
+      updateUserInfo() {
+        let self = this
+        let data = {}
+        data.name = self.name
+        data.phone = self.phone
+        data.mail = self.mail
+        data.school = self.school
+        data.profession = self.profession
+        data.degree = self.educationCodeList[self.educationIndex - 1]
+//        console.log('文字时间', new Date(self.startDate).getTime(), self.startDate, self.endDate)
+        data.studyStart = new Date(self.startDate).getTime()
+        data.studyEnd = new Date(self.endDate).getTime()
+        if (!this.validator(data)) {
+          return
+        }
+        console.log('data数据', data)
+        requestApi('updateUserInfo', data).then((res) => {
+          console.log('修改成功', res)
+          store.dispatch({
+            type: 'SET_SUBMIT',
+            payload: true
+          })
+          store.dispatch({
+            type: 'SET_USERINFO',
+            payload: null
+          })
+          wx.showToast({
+            title: '提交成功',
+            icon: 'success',
+            duration: 800,
+            success: () => {
+              wx.navigateBack({
+                delta: 1
+              })
+            }
+          })
+        })
+      }
+    }
+
+    events = {
+      'prePage': (e) => {
+        wx.navigateBack({
+          delta: 1
+        })
+      }
+    }
+
+    onLoad() {
+//      wx.showLoading({
+//        title: '加载中...',
+//        mask: true
+//      })
+      let self = this
+      let userInfo = store.getState().global.userInfo
+      if (!userInfo) {
+        requestApi('getUserInfo').then((res) => {
+          console.log('userInfo', res)
+          userInfo = res.data.data
+          store.dispatch({
+            type: 'SET_USERINFO',
+            payload: userInfo
+          })
+          self.manageUserInfo(userInfo)
+          self.$apply()
+        })
+      } else {
+        self.manageUserInfo(userInfo)
+      }
+    }
+    onShow() {
+      if (this.schoolName !== '') {
+        this.school = this.schoolName
+        this.$apply()
+      }
+    }
+    manageUserInfo(userInfo) {
+      this.name = userInfo.name || ''
+      this.phone = userInfo.phone || ''
+      this.mail = userInfo.mail || ''
+      this.school = userInfo.school || '请选择'
+      this.degree = userInfo.degree || ''
+      let self = this
+      this.educationCodeList.forEach((value, index) => {
+        if (self.degree === value) {
+          self.educationIndex = index + 1
+        }
+      })
+      this.profession = userInfo.profession || ''
+      this.startDate = userInfo.studyStart ? this.normalizeDate(userInfo.studyStart, 'start') : '开始时间'
+      this.endDate = userInfo.studyEnd ? this.normalizeDate(userInfo.studyEnd, 'end') : '结束时间'
+//      this.startDate = '开始时间'
+//      this.endDate = '结束时间'
+      this.$apply()
+    }
+    normalizeDate(timeStamp, str) {
+      let dateString = ''
+      if (!timeStamp) {
+        if (str === 'start') {
+          dateString = '开始时间'
+        } else {
+          dateString = '结束时间'
+        }
+        return dateString
+      } else {
+        let date = new Date(timeStamp)
+        dateString += `${date.getFullYear()}-${this.pad(date.getMonth() + 1)}-${this.pad(date.getDate())}`
+      }
+      return dateString
+    }
+    pad(num) {
+      if (num < 10) {
+        num = '0' + num
+      }
+      return num
+    }
+    validator(data) {
+      if (data.name.trim().length <= 0) {
+        wx.showToast({
+          title: '请填写名字！',
+          icon: 'none',
+          duration: 1000,
+          mask: true
+        })
+        return false
+      }
+      if (!(/^1(3|4|5|7|8)\d{9}$/.test(data.phone.trim()))) {
+        wx.showToast({
+          title: '手机号码格式错误！',
+          icon: 'none',
+          duration: 1000,
+          mask: true
+        })
+        return false
+      }
+      let reg = new RegExp('^[a-zA-Z0-9_-]+@[a-zA-Z0-9_-]+(\\.[a-zA-Z0-9_-]+)+$');
+      if (!reg.test(data.mail.trim())) {
+        wx.showToast({
+          title: '邮箱格式错误！',
+          icon: 'none',
+          duration: 1000,
+          mask: true
+        })
+        return false
+      }
+      if (data.school.trim().length <= 0 || data.school.trim() === '请选择') {
+        wx.showToast({
+          title: '请输入学校名字！',
+          icon: 'none',
+          duration: 1000,
+          mask: true
+        })
+        return false
+      }
+      if (data.profession.trim().length <= 0) {
+        wx.showToast({
+          title: '请填写专业！',
+          icon: 'none',
+          duration: 1000,
+          mask: true
+        })
+        return false
+      }
+      if (!data.degree || data.degree.trim().length <= 0) {
+        wx.showToast({
+          title: '请选择学历！',
+          icon: 'none',
+          duration: 1000,
+          mask: true
+        })
+        return false
+      }
+      if (!data.studyStart || !data.studyEnd || data.studyStart === '开始时间' || data.studyEnd === '结束时间') {
+        wx.showToast({
+          title: '请完善在校时间！',
+          icon: 'none',
+          duration: 1000,
+          mask: true
+        })
+        return false
+      }
+      return true
+    }
+  }
+</script>

@@ -1,0 +1,409 @@
+<style lang="less">
+  page {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    background: #F5F8FA;
+  }
+  .detail {
+    position: absolute;
+    box-sizing: border-box;
+    padding: 115px 30rpx 0;
+    display: flex;
+    flex-direction: column;
+    z-index: 220;
+    width: 100%;
+    .company-card {
+      box-sizing: border-box;
+      flex: 1;
+      padding: 42rpx 40rpx 48rpx 40rpx;
+      box-shadow: 0 4rpx 14rpx 0 rgba(39,38,45,0.05);
+      border-radius: 8rpx;
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      background-color: #fff;
+      margin-bottom: 30rpx;
+      .company-logo {
+        width: 134rpx;
+        height: 134rpx;
+        margin-right: 40rpx;
+        border-radius: 10rpx;
+        border: 1px solid #F0F0F0;
+      }
+      .company-message {
+        overflow: hidden;
+        flex: 1;
+      }
+      .company-job-name {
+        font-family: PingFangSC-Medium;
+        font-size: 32rpx;
+        width: 100%;
+        line-height: 44rpx;
+        font-weight: bold;
+        color: #222222;
+        letter-spacing: 1.6px;
+        margin-bottom: 18rpx;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+      }
+      .company-name {
+        opacity: 0.8;
+        font-family: PingFangSC-Regular;
+        font-size: 26rpx;
+        line-height: 36rpx;
+        color: #515151;
+        letter-spacing: 1.3px;
+        margin-bottom: 4rpx;
+      }
+      .company-classify {
+        opacity: 0.8;
+        font-family: PingFangSC-Regular;
+        font-size: 13px;
+        color: #999999;
+        letter-spacing: 1.3px;
+        line-height: 36rpx;
+      }
+      .company-size {
+        padding-left: 26rpx;
+      }
+    }
+    .job-detail {
+      margin-bottom: 40rpx;
+      box-sizing: border-box;
+      flex: 1;
+      padding: 36rpx 40rpx;
+      box-shadow: 0 4rpx 14rpx 0 rgba(39,38,45,0.05);
+      border-radius: 8rpx;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      background-color: #fff;
+      .item {
+        width: 100%;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 56rpx;
+        &:last-child {
+          margin: 0;
+        }
+        .item-title {
+          font-family: PingFangSC-Medium;
+          font-size: 28rpx;
+          color: #515151;
+          letter-spacing: 0;
+          line-height: 40rpx;
+          text-align: left;
+          font-weight: bold;
+        }
+        .item-money {
+          font-family: PingFangSC-Regular;
+          font-size: 28rpx;
+          color: #FF5B3E;
+          letter-spacing: 0;
+          line-height: 40rpx;
+          flex: 1;
+          text-align: right;
+        }
+        .item-value {
+          font-family: PingFangSC-Regular;
+          font-size: 28rpx;
+          color: #A4A4A4;
+          letter-spacing: 0;
+          line-height: 40rpx;
+          flex: 1;
+          text-align: right;
+        }
+      }
+    }
+    .job-describe {
+      box-sizing: border-box;
+      flex: 1;
+      padding: 36rpx 40rpx 0;
+      box-shadow: 0 4rpx 14rpx 0 rgba(39,38,45,0.05);
+      border-radius: 8rpx;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      background-color: #fff;
+      margin-bottom: 150rpx;
+      .job-title{
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: flex-start;
+        width: 100%;
+        padding-bottom: 16rpx;
+        border-bottom: 1rpx solid #f4f4f4;
+        margin-bottom: 20rpx;
+        .job-title-icon{
+          width: 8rpx;
+          height: 30rpx;
+          background-color: #6472FB;
+          margin-right: 20rpx;
+        }
+        .job-title-text {
+          font-family: PingFangSC-Semibold;
+          font-weight: bold;
+          letter-spacing: 0.24px;
+          font-size: 32rpx;
+          line-height: 44rpx;
+          color: #202C68;
+        }
+      }
+      /*要删除掉的html和样式， 改用wxparse的方式来展示数据*/
+      .job-describe-detail {
+        width: 100%;
+        font-family: PingFangSC-Regular;
+        font-size: 28rpx;
+        color: #6D6D6D;
+        letter-spacing: 0.5px;
+        line-height: 44rpx;
+        text-align: left;
+        margin-bottom: 70rpx;
+      }
+    }
+  }
+  .tab-bottom {
+    position: fixed;
+    z-index: 500;
+    bottom: 0;
+    width: 100%;
+    height: 110rpx;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    background: #fff;
+    border: 1rpx solid #fff;
+    box-shadow: 0 -4px 28px 0 rgba(0,0,0,0.10);
+    .tab-share {
+      background-color: #fff;
+      border: 0;
+      padding: 0;
+      border-radius: 0;
+      outline: none;
+      &::after {
+        border: none;
+      }
+    }
+    .tab-line {
+      width: 1rpx;
+      height: 40rpx;
+      background-color: #f6f6f6;
+    }
+    .tab-item {
+      flex: 1;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      .tab-icon {
+        width: 56rpx;
+        height: 58rpx;
+        margin-right: 14rpx;
+      }
+      .tab-text {
+        font-family: PingFangSC-Regular;
+        font-size: 28rpx;
+        line-height: 40rpx;
+        color: #222222;
+        text-align: left;
+      }
+    }
+  }
+
+</style>
+<template>
+  <headerTitle></headerTitle>
+  <view class="detail">
+    <view class="company-card">
+      <image class="company-logo" src="{{career.logo}}"></image>
+      <view class="company-message">
+        <view class="company-job-name">{{career.name}}</view>
+        <view class="company-detail">
+          <view class="company-name">{{career.cmpShortName}}</view>
+          <view class="company-classify">{{career.kind}}<text class="company-size">{{career.scale}}</text></view>
+        </view>
+      </view>
+    </view>
+    <view class="job-detail">
+      <view class="item">
+        <view class="item-title">实习待遇</view>
+        <view class="item-money">{{career.wage}}</view>
+      </view>
+      <view class="item">
+        <view class="item-title">实习时长</view>
+        <view class="item-value">{{career.duration}}</view>
+      </view>
+      <view class="item">
+        <view class="item-title">工作地点</view>
+        <view class="item-value">{{career.address}}</view>
+      </view>
+      <view class="item">
+        <view class="item-title">结束时间</view>
+        <view class="item-value">{{career.endTime}}</view>
+      </view>
+      <view class="item">
+        <view class="item-title">是否可转正</view>
+        <view class="item-value">{{career.canOffer}}</view>
+      </view>
+    </view>
+    <view class="job-describe">
+      <view class="job-title">
+        <view class="job-title-icon"></view>
+        <view class="job-title-text">职位列表</view>
+      </view>
+      <view class="job-describe-detail">
+        <view>1.这部分目前是写死的</view>
+        <view>2.策划方案，与设计师沟通</view>
+        <view>3.负责手游公关传播策划</view>
+        <view>4.策划方案，与设计师沟通</view>
+      </view>
+      <view class="job-title">
+        <view class="job-title-icon"></view>
+        <view class="job-title-text">任职要求</view>
+      </view>
+      <view class="job-describe-detail">
+        <view>1.这部分目前是写死的</view>
+        <view>2.策划方案，与设计师沟通</view>
+        <view>3.负责手游公关传播策划</view>
+        <view>4.策划方案，与设计师沟通</view>
+      </view>
+    </view>
+  </view>
+  <view class="tab-bottom">
+    <button open-type="share" class="tab-share tab-item" @tap="share">
+      <image class="tab-icon" src="../common/images/share.png"></image>
+      <view class="tab-text">分享</view>
+    </button>
+    <view class="tab-line"></view>
+    <view class="tab-collect tab-item" @tap="collect">
+      <image class="tab-icon" src="{{collectImage}}"></image>
+      <view class="tab-text">{{collectText}}</view>
+    </view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  import headerTitle from '../components/header/header-title'
+  import { requestApi, transformTime } from '../api/index'
+  import { logoUrl } from '../api/config/baseConfig'
+  export default class Index extends wepy.page {
+    config = {}
+    components = {
+      headerTitle: headerTitle
+    }
+    data = {
+      id: '',
+      career: {},
+      lock_collect: false,
+      collectImage: '../common/images/collect.png',
+      collectText: '收藏',
+      collectImage1: '../common/images/collect-light.png',
+      collectImage2: '../common/images/collect.png'
+//      career: {
+//        money: '200-300/天',
+//        duration: '4个月',
+//        address: '广州市越秀区',
+//        endDate: '2018年1月28日',
+//        turn: '是'
+//      }
+    }
+
+    computed = {}
+
+    methods = {
+      share(e) {
+      },
+      collect(e) {
+        let self = this
+        if (!self.lock_collect) {
+          self.lock_collect = true
+          if (self.career.collectNum === 0) {
+            requestApi('addCollection', {id: this.id}).then(res => {
+              console.log('添加收藏------', res)
+              self.collectImage = self.collectImage1
+              self.collectText = '取消收藏'
+              self.career.collectNum = 1
+              self.lock_collect = false
+              self.$apply()
+            })
+          } else {
+            requestApi('deleteCollection', {id: this.id}).then(res => {
+              console.log('删除收藏------', res)
+              self.collectImage = self.collectImage2
+              self.collectText = '收藏'
+              self.career.collectNum = 0
+              self.lock_collect = false
+              self.$apply()
+            })
+          }
+        }
+      }
+    }
+
+    events = {
+      'prePage': (e) => {
+        wx.navigateBack({
+          delta: 1
+        })
+      }
+    }
+
+    onLoad(opts) {
+      let self = this
+      self.id = opts.id ? opts.id : ''
+      console.log('detail id  ', opts.id)
+      requestApi('getDetailById', {id: opts.id}).then((res) => {
+        self.career = res.data.data
+        self.career.endTime = transformTime(self.career.endTime, 3)
+        self.career.canOffer = self.career.canOffer === 'Y' ? '是' : '否'
+        self.career.kind = self.career.company.trade
+        self.career.logo = logoUrl + self.career.company.id
+        self.career.scale = self.getScale(self.career.company.scale)
+        if (self.career.collectNum !== 0) {
+          self.collectImage = self.collectImage1
+          self.collectText = '取消收藏'
+        }
+        self.$apply()
+      })
+    }
+
+    onShareAppMessage(res) {
+      console.log('分享信息', res);
+      let data = {
+        title: this.career.name,
+        path: `/pages/index?id=${this.career.id}`
+      }
+      return data
+    }
+    getScale(str) {
+      let scaleString = ''
+      switch (str) {
+        case 'L_ONE':
+          scaleString = '100人以下'
+          break;
+        case 'L_TWO':
+          scaleString = '100~1000'
+          break;
+        case 'L_THREE':
+          scaleString = '1000~2000'
+          break;
+        case 'L_FOUR':
+          scaleString = '2000以上'
+          break;
+        default:
+          scaleString = '100人以下'
+          break;
+      }
+      return scaleString;
+    }
+  }
+</script>

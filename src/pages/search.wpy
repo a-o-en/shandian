@@ -1,0 +1,145 @@
+<style lang="less">
+  page {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    background: #F5F8FA;
+  }
+  .no-result {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    background-color: #fff;
+    .no-result-display {
+      position: absolute;
+      top: 50%;
+      transform: translate(0, -50%);
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      .no-result-image {
+        width: 278rpx;
+        height: 182rpx;
+        margin-bottom: 54rpx;
+      }
+      .no-result-text {
+        width: 100%;
+        font-family: PingFangSC-Regular;
+        font-size: 32rpx;
+        line-height: 44rpx;
+        color: #999999;
+        text-align: center;
+      }
+    }
+  }
+  .list {
+    position: relative;
+    box-sizing: border-box;
+    padding: calc(151px + 40rpx) 30rpx 0;
+    display: flex;
+    flex-direction: column;
+    z-index: 220;
+  }
+</style>
+<template>
+  <header :showBack="showBack" :showInput="showInput"></header>
+  <view class="no-result" wx:if="{{noResult}}">
+    <view class="no-result-display">
+      <image class="no-result-image" src="../common/images/no-result.png"></image>
+      <view class="no-result-text">无搜索结果</view>
+    </view>
+  </view>
+  <view class="list" wx:else>
+    <list :jobList.sync="jobList"></list>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  import header from '../components/header/header'
+  import list from '../components/list/list'
+  import { requestApi, transformTime } from '../api/index'
+  import { logoUrl } from '../api/config/baseConfig'
+  const reg = /.*\('(.*)'\).*/
+
+  export default class Index extends wepy.page {
+    config = {}
+    components = {
+      header: header,
+      list: list
+    }
+    data = {
+      showBack: true,
+      showInput: true,
+      noResult: true,
+      searchString: '',
+      preSearchString: '',
+      page: 1,
+      jobList: []
+    }
+
+    computed = {}
+
+    methods = {}
+
+    events = {
+      'prePage': (e) => {
+        wx.navigateBack({
+          delta: 1
+        })
+      },
+      'toDetail': (id) => {
+        this.$navigate({
+          url: '/pages/detail?id=' + id
+        })
+      },
+      'search': (searchString) => {
+        this.preSearchString = this.searchString
+        this.searchString = searchString
+        this.page = 1
+        this.search()
+      }
+    }
+    onReachBottom() {
+      console.log('触底。。。加载。。。');
+      this.page += 1;
+      this.search()
+    }
+    onLoad(opt) {
+      this.searchString = opt.searchString
+      this.search()
+    }
+    search() {
+      let self = this
+      wx.showLoading({
+        mask: true,
+        title: '搜索中...'
+      })
+      requestApi('search', {page: self.page, key: self.searchString}).then(res => {
+        wx.hideLoading()
+        console.log('搜索结果', res)
+        let tempJobList = res.data.data.careers
+        tempJobList.forEach(function(currentValue, index) {
+          let tempReg = reg.exec(currentValue.company)
+//          console.log('匹配结果', tempReg)
+          currentValue.logo = logoUrl + tempReg[1]
+          currentValue.publishTime = transformTime(currentValue.publishTime)
+        })
+        if (tempJobList.length > 0) {
+          self.jobList = (self.jobList.length > 0 && self.preSearchString === self.searchString) ? self.jobList.concat(tempJobList) : tempJobList
+        } else {
+          wx.showToast({
+            title: '暂时没有更多数据了！',
+            icon: 'none',
+            duration: 1000
+          })
+        }
+        self.noResult = self.jobList.length <= 0
+        console.log('搜索结果2', self.jobList)
+        self.$apply()
+      })
+    }
+  }
+</script>

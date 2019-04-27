@@ -1,0 +1,290 @@
+<style lang="less">
+  page {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    background: #F5F8FA;
+  }
+  .header-mask {
+    position: fixed;
+    top: 0;
+    z-index: 205;
+    width: 100%;
+    height: 115px;
+    overflow: hidden;
+    background-color: #fff;
+  }
+  .header-background-second {
+    position: relative;
+    top: 0;
+    z-index: 200;
+    width: 100%;
+    height: 151px;
+    overflow: hidden;
+    background-color: #fff;
+  }
+  .header-background{
+    position: fixed;
+    top: 0;
+    width: 100%;
+    height: 151px;
+  }
+  .header-title{
+    font-family: PingFangSC-Medium;
+    position: fixed;
+    top: 51px;
+    z-index: 210;
+    font-size: 17px;
+    line-height: 24px;
+    text-align: center;
+    width: 100%;
+    color: #fff;
+  }
+  .personal {
+    position: absolute;
+    box-sizing: border-box;
+    padding: 115px 30rpx 0;
+    display: flex;
+    flex-direction: column;
+    z-index: 100;
+    width: 100%;
+    .personal-card {
+      background-color: #fff;
+      flex: 1;
+      padding: 54rpx 44rpx 54rpx 40rpx;
+      box-shadow: 0 4rpx 18rpx 0 rgba(39,38,45,0.08);
+      border-radius: 8rpx;
+      box-sizing: border-box;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 30rpx;
+      .personal-card-avatar {
+        width: 120rpx;
+        height: 120rpx;
+        border-radius: 50%;
+        margin-right: 40rpx;
+        background: #FFFFFF;
+        border: 1px solid #F0F0F0;
+        overflow: hidden;
+        .personal-card-avatar-image {
+          width: 100%;
+          height: 100%;
+        }
+      }
+      .personal-card-name {
+        font-family: PingFangSC-Medium;
+        flex: 1;
+        font-size: 30rpx;
+        font-weight: bold;
+        line-height: 42rpx;
+        color: #222222;
+        text-align: left;
+      }
+      .personal-card-edit {
+        width: 56rpx;
+        height: 58rpx;
+      }
+    }
+    .personal-message {
+      background-color: #fff;
+      flex: 1;
+      padding: 36rpx 40rpx;
+      margin-bottom: 100rpx;
+      box-shadow: 0 4rpx 14rpx 0 rgba(39, 38, 45, 0.05);;
+      border-radius: 8rpx;
+      box-sizing: border-box;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      .item {
+        width: 100%;
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        margin-bottom: 72rpx;
+        &:last-child {
+          margin: 0;
+        }
+        .item-title {
+          font-family: PingFangSC-Medium;
+          font-size: 34rpx;
+          color: #515151;
+          letter-spacing: 0;
+          text-align: center;
+          line-height: 48rpx;
+        }
+        .item-value {
+          flex: 1;
+          font-family: PingFangSC-Regular;
+          font-size: 30rpx;
+          color: #A4A4A4;
+          letter-spacing: 0;
+          text-align: right;
+          line-height: 42rpx;
+        }
+      }
+    }
+  }
+</style>
+<template>
+  <view class="header-mask">
+    <image src="../common/images/bg-top.png" class="header-background-second"></image>
+  </view>
+  <image src="../common/images/bg-top.png" class="header-background"></image>
+  <view class="header-title">闪电实习</view>
+  <view class="personal">
+    <view class="personal-card">
+      <view class="personal-card-avatar">
+        <open-data class="personal-card-avatar-image" type="userAvatarUrl"></open-data>
+      </view>
+      <view class="personal-card-name">{{userInfo.name}}</view>
+      <image @tap="toEdit" class="personal-card-edit" src="../common/images/edit.png"></image>
+    </view>
+    <view class="personal-message">
+      <view class="item">
+        <view class="item-title">姓名</view>
+        <view class="item-value">{{userInfo.name}}</view>
+      </view>
+      <view class="item">
+        <view class="item-title">手机号</view>
+        <view class="item-value">{{userInfo.phone}}</view>
+      </view>
+      <view class="item">
+        <view class="item-title">邮箱</view>
+        <view class="item-value">{{userInfo.mail}}</view>
+      </view>
+      <view class="item">
+        <view class="item-title">学校</view>
+        <view class="item-value">{{userInfo.school}}</view>
+      </view>
+      <view class="item">
+        <view class="item-title">学历</view>
+        <view class="item-value">{{userInfo.degreeString}}</view>
+      </view>
+      <view class="item">
+        <view class="item-title">在校时间</view>
+        <view class="item-value">{{userInfo.schoolTime}}</view>
+      </view>
+      <view class="item">
+        <view class="item-title">专业</view>
+        <view class="item-value">{{userInfo.profession}}</view>
+      </view>
+    </view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  import headerBg from '../components/header/header-bg'
+  import { requestApi } from '../api/index'
+  import { getStore } from 'wepy-redux'
+  const store = getStore()
+
+  export default class Index extends wepy.page {
+    config = {}
+    components = {
+      headerBg: headerBg
+    }
+    data = {
+      userInfo: {
+        name: '未填写',
+        phone: '未填写',
+        mail: '未填写',
+        school: '未填写',
+        degree: '未填写',
+        schoolTime: '未填写',
+        profession: '未填写'
+      },
+      submit: false,
+      first: true
+    }
+
+    computed = {}
+
+    methods = {
+      toEdit(e) {
+        this.$navigate({
+          url: '/pages/edit'
+        })
+      }
+    }
+
+    events = {}
+
+    onLoad() {
+    }
+    onShow() {
+      let self = this
+      self.submit = store.getState().global.submit
+      console.log('submit status:', self.submit)
+      if (self.first || self.submit) {
+        if (self.first) {
+          self.first = false
+        }
+        store.dispatch({
+          type: 'SET_SUBMIT',
+          payload: false
+        })
+        wx.showLoading({
+          title: '加载中...',
+          mask: true
+        })
+        let userInfo = store.getState().global.userInfo
+        if (!userInfo) {
+          requestApi('getUserInfo').then((res) => {
+            console.log('userInfo', res)
+            userInfo = res.data.data
+            store.dispatch({
+              type: 'SET_USERINFO',
+              payload: userInfo
+            })
+            self.manageUserInfo(userInfo)
+            self.$apply()
+          })
+        } else {
+          self.manageUserInfo(userInfo)
+        }
+      } else {
+      }
+    }
+    manageUserInfo(userInfo) {
+      this.userInfo.degreeString = this.transformDegree(userInfo.degree) || '请填写'
+      this.userInfo.name = userInfo.name || '请填写'
+      this.userInfo.phone = userInfo.phone || '请填写'
+      this.userInfo.mail = userInfo.mail || '请填写'
+      this.userInfo.school = userInfo.school || '请填写'
+      this.userInfo.degree = userInfo.degree || '请填写'
+      this.userInfo.profession = userInfo.profession || '请填写'
+      let schoolTimeString = ''
+      schoolTimeString += userInfo.studyStart ? new Date(userInfo.studyStart).getFullYear() + '年-' : ''
+      schoolTimeString += userInfo.studyEnd ? new Date(userInfo.studyEnd).getFullYear() + '年' : ''
+      this.userInfo.schoolTime = schoolTimeString || '请填写'
+      wx.hideLoading()
+      this.$apply()
+    }
+    transformDegree(str) {
+      let degreeString = ''
+      switch (str) {
+        case 'SC':
+          degreeString = '专科'
+          break;
+        case 'UU':
+          degreeString = '本科'
+          break;
+        case 'MA':
+          degreeString = '研究生'
+          break;
+        case 'PHD':
+          degreeString = '博士'
+          break;
+        default:
+          degreeString = ''
+          break;
+      }
+      return degreeString
+    }
+  }
+</script>

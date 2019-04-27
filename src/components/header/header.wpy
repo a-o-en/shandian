@@ -1,0 +1,174 @@
+<style type="less">
+  .header {
+    position: fixed;
+    top: 0;
+    z-index: 1000;
+    width: 100%;
+    height: 151px;
+    .header-back-btn {
+      position: absolute;
+      top: 51px;
+      width: 24px;
+      height: 24px;
+      padding-left: 12px;
+      z-index: 210;
+    }
+    .header-background{
+      width: 100%;
+      height: 100%;
+    }
+    .header-title{
+      font-family: PingFangSC-Medium;
+      position: absolute;
+      top: 51px;
+      font-size: 17px;
+      line-height: 24px;
+      text-align: center;
+      width: 100%;
+      color: #fff;
+    }
+    .search {
+      position: absolute;
+      bottom: 17px;
+      background-color: #fff;
+      width: 680rpx;
+      height: 72rpx;
+      border-radius: 36rpx;
+      margin: 0 35rpx;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: center;
+      .search-Input {
+        display: flex;
+        flex: 1;
+        align-items: center;
+        justify-content: center;
+        .search-input-txt {
+          flex: 1;
+          font-size: 26rpx;
+          color: #222222;
+          line-height: 36rpx;
+          height: 36rpx;
+        }
+        .search-icon{
+          width: 28rpx;
+          height: 28rpx;
+          margin: 0 22rpx 0 34rpx;
+        }
+        .clear-icon{
+          width: 28rpx;
+          height: 28rpx;
+          padding: 20rpx 34rpx 20rpx 10rpx;
+        }
+      }
+      .search-button {
+        display: flex;
+        align-items: center;
+        flex: 1;
+        justify-content: center;
+        .search-icon{
+          width: 28rpx;
+          height: 28rpx;
+          margin-right: 14rpx;
+        }
+        .search-txt {
+          font-size: 28rpx;
+          line-height: 36rpx;
+          padding-right: 14rpx;
+          color: #b2b2b2;
+        }
+      }
+    }
+  }
+</style>
+
+<template>
+  <view class="header">
+    <image wx:if="{{showBack}}"
+           @tap="prePage"
+           src="../../common/images/back-white.png"
+           class="header-back-btn">
+    </image>
+    <image src="../../common/images/bg-top.png" class="header-background"></image>
+    <view class="header-title">闪电实习</view>
+    <view class="search"
+          @tap="tapSearch"
+    >
+      <view class="search-Input" wx:if="{{showInput}}">
+        <image class="search-icon" src="../../common/images/search.png"></image>
+        <input type="text"
+               confirm-type="search"
+               cursor="0"
+               focus="{{focus}}"
+               class="search-input-txt"
+               value="{{searchString}}"
+               placeholder="请输入要搜索的内容"
+               placeholderStyle="color: #b2b2b2"
+               @confirm="comfirm"
+               @input="inputChange"
+        />
+        <image class="clear-icon"
+               src="../../common/images/clear.png"
+               @tap="clearInput"
+        >
+        </image>
+      </view>
+      <view class="search-button" wx:if="{{!showInput}}">
+        <image class="search-icon" src="../../common/images/search.png"></image>
+        <view class="search-txt">搜索</view>
+      </view>
+    </view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy';
+
+  export default class index extends wepy.component {
+    props = {
+      showBack: {
+        type: Boolean,
+        default: false
+      },
+      showInput: {
+        type: Boolean,
+        default: false
+      }
+    }
+    components = {}
+    data = {
+      searchString: '',
+      focus: false
+    }
+    events = {}
+    methods = {
+      tapSearch(e) {
+        this.showInput = true
+        this.focus = true
+        this.$apply()
+      },
+      prePage(e) {
+        this.$emit('prePage')
+      },
+      clearInput(e) {
+        this.searchString = ''
+        this.$apply()
+      },
+      inputChange(e) {
+        this.searchString = e.detail.value
+      },
+      comfirm(e) {
+        console.log('搜索。。。', e.detail.value)
+        let searchString = e.detail.value
+        if (searchString.trim().length <= 0) {
+        } else {
+          searchString = searchString.trim()
+          this.$emit('search', searchString)
+        }
+      }
+    }
+    onShow() {
+    }
+  }
+</script>

@@ -1,0 +1,199 @@
+<style lang="less">
+  page {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    background-color: #F5F8FA;
+  }
+  .index-default {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    padding-top: 151px;
+    box-sizing: border-box;
+    background-color: #fff;
+    .index-image-warp {
+      margin-top: 230rpx;
+    }
+    .index-default-img {
+      width: 750rpx;
+      height: 384rpx;
+    }
+    .index-txt {
+      font-size: 32rpx;
+      line-height: 44rpx;
+      color: #999;
+      width: 100%;
+      text-align: center;
+      margin-top: 40rpx;
+    }
+  }
+  .job-list-wrap {
+    box-sizing: border-box;
+    padding: 151px 30rpx 0;
+    display: flex;
+    flex-direction: column;
+    .job-title{
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: flex-start;
+      width: 100%;
+      .job-title-icon{
+        width: 8rpx;
+        height: 30rpx;
+        background-color: #6472FB;
+        margin-right: 20rpx;
+      }
+      .job-title-text {
+        font-family: PingFangSC-Semibold;
+        font-weight: bold;
+        letter-spacing: 0.24px;
+        font-size: 32rpx;
+        line-height: 44rpx;
+        color: #202C68;
+        margin: 40rpx 0;
+      }
+    }
+  }
+</style>
+<template>
+  <header></header>
+  <view class="index-default" wx:if="{{notMessage}}">
+    <view class="index-image-warp" @tap="toEdit">
+      <image class="index-default-img" src="../common/images/index.png" mode="aspectFit"></image>
+      <view class="index-txt">点击添加学校信息，获取优质实习推荐</view>
+    </view>
+  </view>
+  <view class="job-list-wrap" wx:if="{{haveSchool}}">
+    <view class="job-title">
+      <view class="job-title-icon"></view>
+      <view class="job-title-text">职位列表</view>
+    </view>
+    <list :jobList.sync="jobList"></list>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  import header from '../components/header/header'
+  import list from '../components/list/list'
+  import { requestApi, transformTime } from '../api/index'
+  import { logoUrl } from '../api/config/baseConfig'
+  import { getStore } from 'wepy-redux'
+  const reg = /.*\('(.*)'\).*/
+  const store = getStore()
+  export default class Index extends wepy.page {
+    config = {}
+    components = {
+      header: header,
+      list: list
+    }
+    data = {
+      id: '5c52b168c0436929f81187b2',
+      token: '',
+      notMessage: false,
+      haveSchool: false,
+      first: true,
+      submit: false,
+      page: 1,
+      jobList: []
+    }
+
+    computed = {}
+
+    methods = {
+      toEdit: () => {
+        this.$navigate({
+          url: '/pages/edit'
+        })
+      }
+    }
+
+    events = {
+      'toDetail': (id) => {
+        this.$navigate({
+          url: '/pages/detail?id=' + id
+        })
+      },
+      'search': (searchString) => {
+        this.$navigate({
+          url: '/pages/search?searchString=' + searchString
+        })
+      }
+    }
+
+    onLoad() {
+      this.getRecommend()
+    }
+    onReachBottom() {
+      console.log('触底。。。加载。。。');
+      this.page += 1;
+      this.getRecommend()
+    }
+    onShow() {
+      let self = this
+      self.submit = store.getState().global.submit
+      if (self.first || self.submit) {
+        if (self.first) {
+          self.first = false
+        }
+        store.dispatch({
+          type: 'SET_SUBMIT',
+          payload: false
+        })
+        wx.showLoading({
+          mask: true,
+          title: '加载中...'
+        })
+        let userInfo = store.getState().global.userInfo
+        if (!userInfo) {
+          requestApi('getUserInfo').then((res) => {
+            console.log('userInfo', res)
+            let userInfo = res.data.data
+            self.manageUserInfo(userInfo)
+            store.dispatch({
+              type: 'SET_USERINFO',
+              payload: userInfo
+            })
+            self.$apply()
+          })
+        } else {
+          self.manageUserInfo(userInfo)
+        }
+      }
+    }
+    getRecommend() {
+      let self = this
+      requestApi('getRecommend', {page: self.page}).then((res) => {
+        console.log('推荐列表', res.data.data.careers)
+        let tempJobList = res.data.data.careers
+        tempJobList.forEach(function(currentValue, index) {
+          let tempReg = reg.exec(currentValue.company)
+//          console.log('匹配结果', tempReg)
+          currentValue.logo = logoUrl + tempReg[1]
+          currentValue.publishTime = transformTime(currentValue.publishTime)
+        })
+        if (tempJobList.length > 0) {
+          self.jobList = self.jobList.length > 0 ? self.jobList.concat(tempJobList) : tempJobList
+        } else {
+          wx.showToast({
+            title: '暂时没有更多数据了！',
+            icon: 'none',
+            duration: 1000
+          })
+        }
+        self.$apply()
+      })
+    }
+    manageUserInfo(userInfo) {
+      if (userInfo && userInfo.school) {
+        this.haveSchool = true
+      } else {
+        this.notMessage = true
+      }
+      wx.hideLoading()
+      this.$apply()
+    }
+  }
+</script>

@@ -1,0 +1,22 @@
+<style type="less">
+
+</style>
+
+<template>
+
+</template>
+
+<script>
+  import wepy from 'wepy';
+
+  export default class index extends wepy.component {
+    props = {}
+    components = {}
+
+    data = {}
+    events = {}
+    methods = {}
+
+    onLoad() {}
+  }
+</script>

@@ -1,0 +1,132 @@
+<style type="less">
+  .item-list {
+    .item {
+      display: flex;
+      flex-direction: column;
+      box-sizing: border-box;
+      padding: 34rpx 35rpx 42rpx;
+      background-color: #fff;
+      margin-bottom: 30rpx;
+      box-shadow: 0 2px 7px 0 rgba(39,38,45,0.05);
+      border-radius: 8rpx;
+    }
+    .item-top {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 34rpx;
+      width: 100%;
+      .item-title {
+        font-family: PingFangSC-Semibold;
+        font-size: 28rpx;
+        line-height: 40rpx;
+        color: #515151;
+        text-align: left;
+        flex: 1;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+      }
+      .item-money {
+        font-family: DINAlternate-Bold;
+        font-size: 34rpx;
+        line-height: 40rpx;
+        color: #FF5B3E;
+        text-align: right;
+      }
+    }
+    .item-bottom {
+      display: flex;
+      width: 100%;
+      flex-direction: row;
+      align-items: center;
+      .item-logo {
+        width: 82rpx;
+        height: 82rpx;
+        overflow: hidden;
+        margin-right: 24rpx;
+        border-radius: 10rpx;
+        border: 1px solid #F0F0F0;
+      }
+      .item-right {
+        display: flex;
+        flex-direction: column;
+        .item-name {
+          margin-bottom: 12rpx;
+          font-family: PingFangSC-Regular;
+          font-size: 24rpx;
+          color: #515151;
+          text-align: left;
+        }
+        .item-address-time {
+          font-family: PingFangSC-Regular;
+          font-size: 24rpx;
+          color: #999999;
+          text-align: left;
+          line-height: 26rpx;
+          .item-address {
+            padding-right: 24rpx;
+            border-right: 1px solid #D9DBE3;
+            margin-right: 24rpx;
+          }
+        }
+      }
+    }
+  }
+</style>
+
+<template>
+  <view class="item-list">
+    <repeat for="{{jobList}}" item="item" key="index" index="index">
+      <view class="item" @tap="toDetail({{item}})">
+        <view class="item-top">
+          <view class="item-title">{{item.name}}</view>
+          <view class="item-money">￥{{item.wage}}</view>
+        </view>
+        <view class="item-bottom">
+          <image class="item-logo" src="{{item.logo}}"></image>
+          <view class="item-right">
+            <view class="item-name">{{item.cmpShortName}}</view>
+            <view class="item-address-time">
+              <text class="item-address">{{item.address}}</text>
+              <text class="item-time">{{item.publishTime}}</text>
+            </view>
+          </view>
+        </view>
+      </view>
+    </repeat>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy';
+
+  export default class index extends wepy.component {
+    props = {
+      jobList: {
+        type: Array,
+        default: null
+      }
+    }
+
+    components = {}
+
+    data = {}
+    events = {}
+    methods = {
+      toDetail(item) {
+        console.log('id  ', item.id)
+        this.$emit('toDetail', item.id)
+      }
+    }
+
+    onLoad() {
+    }
+    watch = {
+      lsit(newValue, oldValue) {
+        console.log('职位列表。。。', newValue)
+      }
+    }
+  }
+</script>
